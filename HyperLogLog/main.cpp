@@ -1,10 +1,14 @@
 #include <iostream>
+#include "HyperLogLog.h"
 
 using namespace std;
 
 int main()
 {
-	cout << "Test github repo" << endl;
+	HyperLogLog::HyperLogLog hll;
+	hll.test();
+
+	cin.get();
 
 	return 0;
 }
