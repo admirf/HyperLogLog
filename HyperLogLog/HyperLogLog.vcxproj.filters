@@ -21,9 +21,15 @@
     <ClCompile Include="HyperLogLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HyperLogLogUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HyperLogLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HyperLogLogUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

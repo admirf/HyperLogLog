@@ -13,12 +13,12 @@ namespace HyperLogLog {
 	}
 
 
-	uint HyperLogLog::getIndex(const uint& index) {
+	ushort HyperLogLog::getIndex(const ushort& index) {
 		return index * REGISTER_SIZE;
 	}
 
 
-	std::bitset<REGISTER_SIZE> HyperLogLog::getRegister(const uint& index) {
+	std::bitset<REGISTER_SIZE> HyperLogLog::getRegister(const ushort& index) {
 		auto base_index = this->getIndex(index);
 		std::bitset<REGISTER_SIZE> slice;
 
@@ -30,7 +30,7 @@ namespace HyperLogLog {
 	}
 
 
-	void HyperLogLog::setValue(const uint& index, const uint& value) {
+	void HyperLogLog::setValue(const ushort& index, const ushort& value) {
 		auto base_index = this->getIndex(index);
 		std::bitset<REGISTER_SIZE> bitvalue(value);
 
@@ -40,7 +40,7 @@ namespace HyperLogLog {
 	}
 
 	
-	uint HyperLogLog::getValue(const uint& index) {
+	ushort HyperLogLog::getValue(const ushort& index) {
 		return this->getRegister(index).to_ulong();
 	}
 

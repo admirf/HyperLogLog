@@ -4,8 +4,7 @@
 #include <bitset>
 
 namespace HyperLogLog {
-
-	typedef unsigned short uint;
+	typedef unsigned short ushort;
 
 	constexpr auto M = 16384;
 	constexpr auto REGISTER_SIZE = 6;
@@ -16,10 +15,10 @@ namespace HyperLogLog {
 		std::bitset<98304> registers;
 
 	protected:
-		uint getIndex(const uint&);
-		uint getValue(const uint&);
-		void setValue(const uint&, const uint&);
-		std::bitset<REGISTER_SIZE> getRegister(const uint&);
+		ushort getIndex(const ushort&);
+		ushort getValue(const ushort&);
+		void setValue(const ushort&, const ushort&);
+		std::bitset<REGISTER_SIZE> getRegister(const ushort&);
 
 	public:
 		HyperLogLog();
