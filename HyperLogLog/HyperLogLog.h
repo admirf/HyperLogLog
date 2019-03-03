@@ -1,18 +1,21 @@
 #ifndef HYPER_LOG_LOG
 #define HYPER_LOG_LOG
 
+#include "HyperLogLogUtil.h"
 #include <bitset>
 
-namespace HyperLogLog {
+namespace hll {
 	typedef unsigned short ushort;
 
 	constexpr auto M = 16384;
 	constexpr auto REGISTER_SIZE = 6;
+	constexpr auto KEY_LENGTH = 14;
 
 	class HyperLogLog {
 
 	private:
 		std::bitset<98304> registers;
+		std::unique_ptr<HyperLogLogUtil> util;
 
 	protected:
 		ushort getIndex(const ushort&);
@@ -23,6 +26,8 @@ namespace HyperLogLog {
 	public:
 		HyperLogLog();
 		~HyperLogLog();
+
+		void add(const void*);
 
 		void test();
 	};

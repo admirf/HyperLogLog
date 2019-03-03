@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-	HyperLogLog::HyperLogLog hll;
+	hll::HyperLogLog hll;
 	hll.test();
 
 	cin.get();

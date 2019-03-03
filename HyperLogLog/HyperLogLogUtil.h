@@ -1,15 +1,19 @@
 #ifndef HYPER_LOG_LOG_UTIL
 #define HYPER_LOG_LOG_UTIL
+#define BIG_CONSTANT(x) (x)
 
-#include <string>
+#include <cstdint>
 
-namespace HyperLogLog {
+namespace hll {
 	class HyperLogLogUtil
 	{
+	private:
+		uint64_t seed = 0;
 	public:
 		HyperLogLogUtil();
 		~HyperLogLogUtil();
-		static uint32_t murmur64(const std::string&);
+
+		uint64_t murmur64(const void*, int);
 	};
 }
 

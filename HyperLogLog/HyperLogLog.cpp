@@ -1,15 +1,34 @@
 #include "HyperLogLog.h"
 #include <iostream>
 
-namespace HyperLogLog {
+namespace hll {
 
-	HyperLogLog::HyperLogLog()
-	{
-	}
+	HyperLogLog::HyperLogLog() : util(std::make_unique<HyperLogLogUtil>()) {}
 
 
-	HyperLogLog::~HyperLogLog()
-	{
+	HyperLogLog::~HyperLogLog() {}
+
+
+	void HyperLogLog::add(const void* element) {
+		auto hash = std::bitset<64>(this->util->murmur64(element, 64));
+		std::bitset<KEY_LENGTH> key;
+
+		ushort i;
+		ushort zeroes = -1;
+		bool set = false;
+
+		for (i = 0; i < KEY_LENGTH; ++i) {
+			key[i] = hash[i];
+		}
+
+		for (; !set && i < 64; ++i, ++zeroes) set = hash[i];
+
+		ushort index = static_cast<ushort>(key.to_ulong());
+		ushort currValue = this->getValue(index);
+
+		if (zeroes > currValue) {
+			this->setValue(index, zeroes);
+		}
 	}
 
 
@@ -41,14 +60,18 @@ namespace HyperLogLog {
 
 	
 	ushort HyperLogLog::getValue(const ushort& index) {
-		return this->getRegister(index).to_ulong();
+		return static_cast<ushort>(this->getRegister(index).to_ulong());
 	}
 
 
 	void HyperLogLog::test() {
-		this->setValue(4, 3);
-
-		std::cout << this->getRegister(4).to_string() << std::endl;
+		this->add("Element 2");
+		this->add("Element 2");
+		this->add("Element 1");
+		this->add("test");
+		this->add("fadgdgfrhsfdhdfgshsdfhsfdhsdhfdshfsdhsdhfdshfdshdfshsdfhfds");
+		this->add("fadgdgfrhsfdhdfgshsdfhsfdhsdhfdshfsdhsdhfdshfdshdfshsdfhfds");
+		this->add("Ultra divlji element koji bi trebo biti cudan");
 	}
 }
 
