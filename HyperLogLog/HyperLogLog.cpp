@@ -14,7 +14,7 @@ namespace hll {
 		std::bitset<KEY_LENGTH> key;
 
 		ushort i;
-		ushort zeroes = -1;
+		ushort zeroes = 0;
 		bool set = false;
 
 		for (i = 0; i < KEY_LENGTH; ++i) {
