@@ -14,6 +14,7 @@ namespace hll {
 		~HyperLogLogUtil();
 
 		uint64_t murmur64(const void*, int);
+		double alpha(uint32_t);
 	};
 }
 

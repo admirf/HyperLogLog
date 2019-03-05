@@ -16,6 +16,7 @@ namespace hll {
 	private:
 		std::bitset<98304> registers;
 		std::unique_ptr<HyperLogLogUtil> util;
+		double _count;
 
 	protected:
 		ushort getIndex(const ushort&);
@@ -28,6 +29,7 @@ namespace hll {
 		~HyperLogLog();
 
 		void add(const void*);
+		double count();
 
 		void test();
 	};

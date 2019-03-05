@@ -17,6 +17,19 @@ namespace hll {
 
 	HyperLogLogUtil::~HyperLogLogUtil() {}
 
+	double HyperLogLogUtil::alpha(uint32_t m) {
+		switch (m)
+		{
+		case 16:
+			return 0.673;
+		case 32:
+			return 0.697;
+		case 64:
+			return 0.709;
+		default:
+			return 0.7213 / (1 + 1.079 / m);
+		}
+	}
 
 	uint64_t HyperLogLogUtil::murmur64(const void * key, int len) {
 		const uint64_t m = BIG_CONSTANT(0xc6a4a7935bd1e995);
