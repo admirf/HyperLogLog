@@ -3,10 +3,8 @@
 #define DEBUG
 #ifdef DEBUG
 
-#include <Windows.h>
 #include <iostream>
 #include <cstdlib>
-#include <sstream>
 #include <cmath>
 #include <map>
 
@@ -105,7 +103,7 @@ namespace hll {
 
 
 	void HyperLogLog::printRegisters() {
-		for (int i = 0; i < M; ++i) {
+		for (int i = 0; i < M * REGISTER_SIZE; ++i) {
 			if (i % REGISTER_SIZE == 0) std::cout << std::endl;
 
 			std::cout << this->registers[i];
