@@ -31,7 +31,7 @@ namespace hll {
 			auto value = this->getValue(i);
 
 			if (value) {
-				sum += 1 / std::pow(2, value);
+				sum += 1 / pow(2, value);
 				++num;
 			}
 		}
@@ -43,6 +43,12 @@ namespace hll {
 
 	void HyperLogLog::add(const void* element) {
 		auto hash = std::bitset<64>(this->util->murmur64(element, 64));
+
+#ifdef DEBUG
+		std::cout << "Hash entry: " << std::endl;
+		std::cout << hash << std::endl;
+#endif
+
 		std::bitset<KEY_LENGTH> key;
 
 		ushort i;
@@ -51,6 +57,10 @@ namespace hll {
 
 		for (i = 0; i < KEY_LENGTH; ++i) key[i] = hash[i];
 		for (; !set && i < 64; ++i, ++zeroes) set = hash[i];
+
+#ifdef DEBUG
+		std::cout << "Zeroes: " << zeroes << std::endl;
+#endif
 
 		ushort index = static_cast<ushort>(key.to_ulong());
 		ushort currValue = this->getValue(index);
@@ -94,38 +104,43 @@ namespace hll {
 	}
 
 
+	void HyperLogLog::printRegisters() {
+		for (int i = 0; i < M; ++i) {
+			if (i % REGISTER_SIZE == 0) std::cout << std::endl;
+
+			std::cout << this->registers[i];
+		}
+	}
+
+
 	void HyperLogLog::test() {
 
 #ifdef DEBUG
-		std::map<std::string, bool> m;
-		auto count = 0;
 
-		for (auto k = 0; k < 10; ++k) {
-			for (auto i = 0; i < 1000; ++i) {
-				std::stringstream ss;
-				ss << i;
-				std::string out = ss.str();
-
-				if (m.find(out) == m.end()) {
-					m[out] = true;
-					++count;
-				}
-
-				this->add(out.c_str());
-			}
-		}
-
-		/*this->add("Element 2");
+		// data set 1 = 10
+		this->add("Element 2");
 		this->add("Element 2");
 		this->add("Element 1");
 		this->add("test");
 		this->add("fadgdgfrhsfdhdfgshsdfhsfdhsdhfdshfsdhsdhfdshfdshdfshsdfhfds");
 		this->add("fadgdgfrhsfdhdfgshsdfhsfdhsdhfdshfsdhsdhfdshfdshdfshsdfhfds");
-		this->add("Ultra divlji element koji bi trebo biti cudan");*/
+		this->add("Ultra divlji element koji bi trebo biti cudan");
+		this->add("Admir je lijen.");
+		this->add("Admir nije lijen.");
+		this->add("Tatar > Ronaldo");
+		this->add("Testing on small sets");
+		this->add("Hope this works.");
 
-		std::cout << count << std::endl;
-		// this->count();
+		// data set 2 = 5
+		this->add("Nedret treba bit fitnes vloger");
+		this->add("Mechovi su op u auto chessu early game");
+		this->add("127.0.0.1:8000");
+		this->add("192.168.0.1");
+		this->add("localhost:8000");
+
+		std::cout << "Count: " << std::endl;
 		std::cout << this->count() << std::endl;
+		this->printRegisters();
 #endif // DEBUG
 		
 	}

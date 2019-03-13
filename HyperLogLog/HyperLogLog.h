@@ -7,14 +7,14 @@
 namespace hll {
 	typedef unsigned short ushort;
 
-	constexpr auto M = 16384;
+	constexpr auto M = 8;
 	constexpr auto REGISTER_SIZE = 6;
-	constexpr auto KEY_LENGTH = 14;
+	constexpr auto KEY_LENGTH = 3;
 
 	class HyperLogLog {
 
 	private:
-		std::bitset<98304> registers;
+		std::bitset<M * REGISTER_SIZE> registers;
 		std::unique_ptr<HyperLogLogUtil> util;
 		double _count;
 
@@ -23,6 +23,7 @@ namespace hll {
 		ushort getValue(const ushort&);
 		void setValue(const ushort&, const ushort&);
 		std::bitset<REGISTER_SIZE> getRegister(const ushort&);
+		void printRegisters();
 
 	public:
 		HyperLogLog();
