@@ -15,6 +15,7 @@ namespace hll {
 
 		uint64_t murmur64(const void*, int);
 		double alpha(uint32_t);
+		double linearCount(uint32_t, uint32_t);
 	};
 }
 

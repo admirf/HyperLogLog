@@ -23,6 +23,7 @@ namespace hll {
 		}
 
 		uint32_t num = 0;
+		uint32_t v = 0;
 		double sum = 0;
 
 		for (auto i = 0; i < M; ++i) {
@@ -32,9 +33,25 @@ namespace hll {
 				sum += 1 / pow(2, value);
 				++num;
 			}
+			else {
+				++v;
+			}
 		}
 
-		this->_count = (1 / sum) * this->util->alpha(num) * num * num;
+		this->_count = (1 / sum) * this->util->alpha(M) * M * M;
+
+		std::cout << "Orig count " << this->_count << std::endl;
+
+		if (v) {
+			this->_count = this->util->linearCount(M, v);
+		}
+		else if (this->_count <= 2.5 * M) {
+			this->_count = this->util->linearCount(M, v);
+		}
+		else if (this->_count < 143165576.533) { }
+		else {
+			this->_count = -4294967296 * log(1 - this->_count / 4294967296);
+		}
 
 		return this->_count;
 	}
@@ -43,8 +60,8 @@ namespace hll {
 		auto hash = std::bitset<64>(this->util->murmur64(element, 64));
 
 #ifdef DEBUG
-		std::cout << "Hash entry: " << std::endl;
-		std::cout << hash << std::endl;
+		/*std::cout << "Hash entry: " << std::endl;
+		std::cout << hash << std::endl;*/
 #endif
 
 		std::bitset<KEY_LENGTH> key;
@@ -57,7 +74,7 @@ namespace hll {
 		for (; !set && i < 64; ++i, ++zeroes) set = hash[i];
 
 #ifdef DEBUG
-		std::cout << "Zeroes: " << zeroes << std::endl;
+		/*std::cout << "Zeroes: " << zeroes << std::endl;*/
 #endif
 
 		ushort index = static_cast<ushort>(key.to_ulong());
@@ -136,9 +153,16 @@ namespace hll {
 		this->add("192.168.0.1");
 		this->add("localhost:8000");
 
+		for (int i = 0; i < 120; ++i) {
+			char buffer[20];
+			_itoa_s
+			(i, buffer, 10);
+			this->add(buffer);
+		}
+
 		std::cout << "Count: " << std::endl;
 		std::cout << this->count() << std::endl;
-		this->printRegisters();
+		// this->printRegisters();
 #endif // DEBUG
 		
 	}

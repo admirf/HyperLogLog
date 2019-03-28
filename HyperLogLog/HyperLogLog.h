@@ -7,9 +7,10 @@
 namespace hll {
 	typedef unsigned short ushort;
 
-	constexpr auto M = 8;
+	
 	constexpr auto REGISTER_SIZE = 6;
-	constexpr auto KEY_LENGTH = 3;
+	constexpr auto KEY_LENGTH = 10;
+	constexpr auto M = 1024;
 
 	class HyperLogLog {
 

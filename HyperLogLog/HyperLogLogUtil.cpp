@@ -1,5 +1,6 @@
 #include "HyperLogLogUtil.h"
 #include <ctime>
+#include <cmath>
 #include <cstdlib>
 
 #define DEBUG
@@ -16,6 +17,11 @@ namespace hll {
 
 
 	HyperLogLogUtil::~HyperLogLogUtil() {}
+
+	double HyperLogLogUtil::linearCount(uint32_t m, uint32_t v) {
+		auto _m = static_cast<double>(m);
+		return _m * log(_m / v);
+	}
 
 	double HyperLogLogUtil::alpha(uint32_t m) {
 		switch (m)
