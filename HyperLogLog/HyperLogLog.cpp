@@ -42,6 +42,9 @@ namespace hll {
 
 		std::cout << "Orig count " << this->_count << std::endl;
 
+		// hll++
+		this->_count = this->_count <= 5.0 * M ? this->_count - this->estimateBias(this->_count) : this->_count;
+
 		if (v) {
 			this->_count = this->util->linearCount(M, v);
 		}
@@ -56,6 +59,27 @@ namespace hll {
 		return this->_count;
 	}
 
+	double HyperLogLog::estimateBias(double estimate) {
+		int l = 0;
+		int r = 198;
+
+		while (l <= r) {
+			int m = (l + r) / 2;
+			double left = this->rawEstimateData[m];
+			double right = this->rawEstimateData[m + 1];
+
+			if (estimate >= left && estimate <= right) {
+				std::cout << "Estimate se nasao " << this->biasData[l] << std::endl;
+				return (this->biasData[l] + this->biasData[r]) / 2.0;
+			}
+
+			if (estimate > right) l = m + 1;
+			else r = m - 1;
+		}
+
+		return -1;
+	}
+
 	void HyperLogLog::add(const void* element) {
 		auto hash = std::bitset<64>(this->util->murmur64(element, 64));
 
@@ -64,13 +88,13 @@ namespace hll {
 		std::cout << hash << std::endl;*/
 #endif
 
-		std::bitset<KEY_LENGTH> key;
+		std::bitset<PRECISION> key;
 
 		ushort i;
 		ushort zeroes = 0;
 		bool set = false;
 
-		for (i = 0; i < KEY_LENGTH; ++i) key[i] = hash[i];
+		for (i = 0; i < PRECISION; ++i) key[i] = hash[i];
 		for (; !set && i < 64; ++i, ++zeroes) set = hash[i];
 
 #ifdef DEBUG
@@ -96,7 +120,7 @@ namespace hll {
 		auto base_index = this->getIndex(index);
 		std::bitset<REGISTER_SIZE> slice;
 
-		for (int i = 0; i < REGISTER_SIZE; ++i) {
+		for (ushort i = 0; i < REGISTER_SIZE; ++i) {
 			slice[i] = this->registers[base_index + i];
 		}
 
@@ -108,7 +132,7 @@ namespace hll {
 		auto base_index = this->getIndex(index);
 		std::bitset<REGISTER_SIZE> bitvalue(value);
 
-		for (int i = 0; i < REGISTER_SIZE; ++i) {
+		for (ushort i = 0; i < REGISTER_SIZE; ++i) {
 			this->registers[base_index + i] = bitvalue[i];
 		}
 	}
@@ -153,7 +177,7 @@ namespace hll {
 		this->add("192.168.0.1");
 		this->add("localhost:8000");
 
-		for (int i = 0; i < 120; ++i) {
+		for (int i = 0; i < 3000; ++i) {
 			char buffer[20];
 			_itoa_s
 			(i, buffer, 10);
