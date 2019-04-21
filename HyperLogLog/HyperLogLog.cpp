@@ -14,8 +14,17 @@ namespace hll {
 
 	HyperLogLog::HyperLogLog() : util(std::make_unique<HyperLogLogUtil>()), _count(0) {}
 
+	HyperLogLog::HyperLogLog(bool logging) : util(std::make_unique<HyperLogLogUtil>()), _count(0), _logging(logging) {
+		if (this->_logging) {
+			this->logFile.open("hll.log", std::ios::app);
+		}
+	}
 
-	HyperLogLog::~HyperLogLog() {}
+	HyperLogLog::~HyperLogLog() {
+		if (this->_logging) {
+			this->logFile.close();
+		}
+	}
 
 	double HyperLogLog::count() {
 		if (this->_count) {
@@ -40,20 +49,39 @@ namespace hll {
 
 		this->_count = (1 / sum) * this->util->alpha(M) * M * M;
 
+#ifdef DEBUG
 		std::cout << "Orig count " << this->_count << std::endl;
+#endif
 
 		// hll++
-		this->_count = this->_count <= 5.0 * M ? this->_count - this->estimateBias(this->_count) : this->_count;
+		if (this->hllpp) {
+			this->_count = this->_count <= 5.0 * M ? this->_count - this->estimateBias(this->_count) : this->_count;
+			auto estimatePrime = this->_count;
 
-		if (v) {
-			this->_count = this->util->linearCount(M, v);
+			if (v) {
+				this->_count = this->util->linearCount(M, v);
+			}
+
+			if (this->_count > this->_threshold) {
+				this->_count = estimatePrime;
+			}
 		}
-		else if (this->_count <= 2.5 * M) {
-			this->_count = this->util->linearCount(M, v);
-		}
-		else if (this->_count < 143165576.533) { }
+		// hll original
 		else {
-			this->_count = -4294967296 * log(1 - this->_count / 4294967296);
+			if (v) {
+				this->_count = this->util->linearCount(M, v);
+			}
+			else if (this->_count <= 2.5 * M) {
+				this->_count = this->util->linearCount(M, v);
+			}
+			else if (this->_count < 143165576.533) {}
+			else {
+				this->_count = -4294967296 * log(1 - this->_count / 4294967296);
+			}
+		}
+
+		if (this->_logging) {
+			this->logFile << this->_count << '\n';
 		}
 
 		return this->_count;
@@ -69,7 +97,6 @@ namespace hll {
 			double right = this->rawEstimateData[m + 1];
 
 			if (estimate >= left && estimate <= right) {
-				std::cout << "Estimate se nasao " << this->biasData[l] << std::endl;
 				return (this->biasData[l] + this->biasData[r]) / 2.0;
 			}
 
@@ -77,7 +104,7 @@ namespace hll {
 			else r = m - 1;
 		}
 
-		return -1;
+		return 0;
 	}
 
 	void HyperLogLog::add(const void* element) {
@@ -121,7 +148,8 @@ namespace hll {
 		std::bitset<REGISTER_SIZE> slice;
 
 		for (ushort i = 0; i < REGISTER_SIZE; ++i) {
-			slice[i] = this->registers[base_index + i];
+			auto offset = base_index + i;
+			slice[i] = this->registers[offset];
 		}
 
 		return slice;
@@ -133,7 +161,8 @@ namespace hll {
 		std::bitset<REGISTER_SIZE> bitvalue(value);
 
 		for (ushort i = 0; i < REGISTER_SIZE; ++i) {
-			this->registers[base_index + i] = bitvalue[i];
+			auto offset = base_index + i;
+			this->registers[offset] = bitvalue[i];
 		}
 	}
 
@@ -149,6 +178,11 @@ namespace hll {
 
 			std::cout << this->registers[i];
 		}
+	}
+
+
+	void HyperLogLog::setHllPlusPlus(bool value) {
+		this->hllpp = value;
 	}
 
 
