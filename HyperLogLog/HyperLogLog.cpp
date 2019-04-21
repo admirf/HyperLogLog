@@ -15,6 +15,14 @@ namespace hll {
 	HyperLogLog::HyperLogLog() : util(std::make_unique<HyperLogLogUtil>()), _count(0) {}
 
 	HyperLogLog::HyperLogLog(bool logging) : util(std::make_unique<HyperLogLogUtil>()), _count(0), _logging(logging) {
+		this->openLogFile();
+	}
+
+	HyperLogLog::HyperLogLog(bool logging, std::function<std::string(double)> f) : util(std::make_unique<HyperLogLogUtil>()), _count(0), _logging(logging), logf(f) {
+		this->openLogFile();
+	}
+
+	void HyperLogLog::openLogFile() {
 		if (this->_logging) {
 			this->logFile.open("hll.log", std::ios::app);
 		}
@@ -50,7 +58,7 @@ namespace hll {
 		this->_count = (1 / sum) * this->util->alpha(M) * M * M;
 
 #ifdef DEBUG
-		std::cout << "Orig count " << this->_count << std::endl;
+		// std::cout << "Orig count " << this->_count << std::endl;
 #endif
 
 		// hll++
@@ -81,7 +89,7 @@ namespace hll {
 		}
 
 		if (this->_logging) {
-			this->logFile << this->_count << '\n';
+			this->logFile << this->logf(this->_count);
 		}
 
 		return this->_count;
@@ -186,7 +194,7 @@ namespace hll {
 	}
 
 
-	void HyperLogLog::test() {
+	void HyperLogLog::test(int number_to_be_estimated) {
 
 #ifdef DEBUG
 
@@ -211,16 +219,14 @@ namespace hll {
 		this->add("192.168.0.1");
 		this->add("localhost:8000");
 
-		for (int i = 0; i < 3000; ++i) {
+		for (int i = 0; i < number_to_be_estimated - 15; ++i) {
 			char buffer[20];
-			_itoa_s
-			(i, buffer, 10);
+			_itoa_s(i, buffer, 10);
 			this->add(buffer);
 		}
 
-		std::cout << "Count: " << std::endl;
-		std::cout << this->count() << std::endl;
-		// this->printRegisters();
+		this->count();
+
 #endif // DEBUG
 		
 	}

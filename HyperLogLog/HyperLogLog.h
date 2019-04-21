@@ -4,7 +4,9 @@
 #include "HyperLogLogUtil.h"
 #include <bitset>
 #include <memory>
+#include <string>
 #include <fstream>
+#include <functional>
 
 namespace hll {
 	typedef unsigned short ushort;
@@ -23,6 +25,7 @@ namespace hll {
 		const double _threshold = 900;
 		bool hllpp = false;
 		bool _logging = false;
+		std::function<std::string(double)> logf = [](double e) { return std::to_string(e); };
 		std::ofstream logFile;
 
 		// Bias
@@ -36,18 +39,20 @@ namespace hll {
 		void setValue(const ushort&, const ushort&);
 		std::bitset<REGISTER_SIZE> getRegister(const ushort&);
 		void printRegisters();
+		void openLogFile();
 		double estimateBias(double);
 
 	public:
 		HyperLogLog();
 		HyperLogLog(bool);
+		HyperLogLog(bool, std::function<std::string(double)>);
 		~HyperLogLog();
 
 		void add(const void*);
 		double count();
 		void setHllPlusPlus(bool);
 
-		void test();
+		void test(int);
 	};
 }
 
