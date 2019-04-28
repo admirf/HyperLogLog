@@ -125,6 +125,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="categories.csv" />
+    <None Include="package.json" />
+    <None Include="redis.js" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -195,7 +195,6 @@ namespace hll {
 
 
 	void HyperLogLog::test(int number_to_be_estimated) {
-
 #ifdef DEBUG
 
 		// data set 1 = 10

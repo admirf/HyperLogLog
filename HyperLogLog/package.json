@@ -1,0 +1,14 @@
+{
+  "name": "hyperloglog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "redis.js",
+  "scripts": {
+    "dev": "node redis"
+  },
+  "author": "admirf",
+  "license": "ISC",
+  "dependencies": {
+    "redis": "^2.8.0"
+  }
+}

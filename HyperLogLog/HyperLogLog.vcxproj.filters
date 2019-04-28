@@ -35,5 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="categories.csv" />
+    <None Include="redis.js">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="package.json" />
   </ItemGroup>
 </Project>
