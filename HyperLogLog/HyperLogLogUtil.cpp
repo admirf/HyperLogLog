@@ -3,7 +3,6 @@
 #include <cmath>
 #include <cstdlib>
 
-#define DEBUG
 
 namespace hll {
 	HyperLogLogUtil::HyperLogLogUtil() {
@@ -21,6 +20,12 @@ namespace hll {
 	double HyperLogLogUtil::linearCount(uint32_t m, uint32_t v) {
 		auto _m = static_cast<double>(m);
 		return _m * log(_m / v);
+	}
+
+	double HyperLogLogUtil::empiricalApprox(double estimate, uint32_t M) {
+		double square = M * M;
+		auto scaler = (1 - (square - estimate) / square);
+		return 0.9 + scaler;
 	}
 
 	double HyperLogLogUtil::alpha(uint32_t m) {

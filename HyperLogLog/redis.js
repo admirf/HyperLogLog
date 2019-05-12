@@ -2,7 +2,7 @@ var redis = require("redis"),
     client = redis.createClient();
 
 var lineReader = require('readline').createInterface({
-    input: require('fs').createReadStream('categories.csv'),
+    input: require('fs').createReadStream('status.csv'),
     crlfDelay: Infinity
 });
 
@@ -15,6 +15,7 @@ lineReader.on('line', function (line) {
 lineReader.on('close', function () {
     client.pfcount('csv', function (err, reply) {
         console.log(reply);
+        client.flushall();
         process.exit();
     });
 });

@@ -5,9 +5,14 @@
 
 using namespace std;
 
-int main()
+int main(int argn, char** args)
 {
-	for (auto i = 1000; i < 10000; i += 200) {
+	string csv_filename = "data.csv";
+	if (argn > 1) {
+		csv_filename = args[1];
+	}
+
+	/*for (auto i = 1000; i < 100000; i += 1000) {
 		hll::HyperLogLog hll(true, [i](double e) {
 			string line = to_string(i) + ", " + to_string(e) + "\n";
 			return line;
@@ -15,10 +20,10 @@ int main()
 		hll.test(i);
 	}
 
-	cout << "Finished graph data..." << endl;
+	cout << "Finished graph data..." << endl;*/
 
 	ifstream csv;
-	csv.open("categories.csv");
+	csv.open(csv_filename);
 
 	if (!csv) {
 		cout << "No file found...";
@@ -34,11 +39,9 @@ int main()
 		++item_count;
 	}
 
-	cout << "CSV count(" << item_count << "): " << hll.count() << endl;
+	cout << hll.count() << endl;
 
 	csv.close();
-
-	cin.get();
 
 	return 0;
 }
