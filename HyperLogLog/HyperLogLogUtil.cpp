@@ -1,16 +1,23 @@
 #include "HyperLogLogUtil.h"
 #include <ctime>
 #include <cmath>
+#include <chrono>
 #include <cstdlib>
-
+#include <cassert>
+#include <iostream>
+#define DEBUG
 
 namespace hll {
-	HyperLogLogUtil::HyperLogLogUtil() {
+
+	HyperLogLogUtil::HyperLogLogUtil(): rng(std::mt19937_64()), distribution(std::uniform_real_distribution<double>(0, 1)) {
+		auto timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+		std::seed_seq ss{ uint32_t(timeSeed), uint32_t(timeSeed >> 32) };
+		rng.seed(ss);
+
 #ifdef DEBUG
-		this->seed = 1996;
+		this->seed = 0;
 #else
-		srand(static_cast<unsigned>(time(NULL)));
-		this->seed = rand();
+		this->seed = timeSeed;
 #endif
 	}
 
@@ -26,6 +33,35 @@ namespace hll {
 		double square = M * M;
 		auto scaler = (1 - (square - estimate) / square);
 		return 0.9 + scaler;
+	}
+
+	int HyperLogLogUtil::zipf(double alfa, int n)
+	{
+		double c = this->normalizationConstant(alfa, n);
+		double z = this->distribution(this->rng);
+		double sum_prob;
+		double zipf_value;
+
+		sum_prob = 0;
+		for (auto i = 1; i <= n; ++i) {
+			sum_prob = sum_prob + c / pow((double) i, alfa);
+			if (sum_prob >= z) {
+				zipf_value = i;
+				break;
+			}
+		}
+
+		return static_cast<int>(zipf_value);
+	}
+
+	double HyperLogLogUtil::normalizationConstant(double alfa, int n)
+	{
+		double c = 0;
+		for (auto i = 1; i <= n; ++i) {
+			c = c + (1.0 / pow((double) i, alfa));
+		}
+
+		return 1.0 / c;
 	}
 
 	double HyperLogLogUtil::alpha(uint32_t m) {

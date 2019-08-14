@@ -7,6 +7,16 @@ using namespace std;
 
 int main(int argn, char** args)
 {
+	hll::HyperLogLogUtil utils;
+
+	for (int i = 0; i < 100; ++i) {
+		cout << utils.zipf(0.5, 20) << endl;
+	}
+
+	cin.get();
+
+	return 0;
+
 	string csv_filename = "data.csv";
 	if (argn > 1) {
 		csv_filename = args[1];
